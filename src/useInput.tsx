@@ -16,4 +16,4 @@ export const useInput = (initVal:any, validator:any) => {
         }
     }
     return { value, onChange };
-}
+};
