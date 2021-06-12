@@ -112,7 +112,22 @@ const useClick = (onClick: any) => {
         };
     }, []);
     return element;
-}
+};
+
+const useConfirm = (msg:string, callback:any, rejection:any) => {
+    if (typeof callback !== "function") {
+        return;
+    }
+    const confirmAction =  () => {
+        if (window.confirm(msg)) {
+            callback();
+        } else {
+            rejection();
+        }
+    };
+    return confirmAction;
+};
+
 
 const App = () => {
     //
@@ -138,8 +153,13 @@ const App = () => {
 
 
     // const input = useRef();
-    const sayHello = () => console.log("say Hello");
-    const title = useClick(sayHello);
+    // const sayHello = () => console.log("say Hello");
+    // const title = useClick(sayHello);
+
+    const deleteWorld = () => console.log("Deleting the World...")
+    const abort = () => console.log("Aborted.")
+    const confrmDelete = useConfirm("You want to DELETE?", deleteWorld, abort);
+
 
     return (
         <div className="App">
@@ -156,8 +176,9 @@ const App = () => {
             {/*    ))}*/}
             {/*<div>{currentItem.content}</div>*/}
 
-            <h1 ref={title}>HI</h1>
+            {/*<h1 ref={title}>HI</h1>*/}
 
+            <button onClick={confrmDelete}>Delete</button>
         </div>
     );
 }
