@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {createGlobalStyle} from 'styled-components';
 import Number from "./Number";
 import {Form, Input} from "./Input";
@@ -86,6 +86,16 @@ const useTabs = (initTab: any, allTabs: any) => {
     }
 }
 
+const useTitle = (initTitle:any) => {
+    const [title, setTitle] = useState(initTitle);
+    const updateTitle = () => {
+        const htmlTitle:any = document.querySelector("title");
+        htmlTitle.innerText = title;
+    };
+    useEffect(updateTitle, [title]);
+    return setTitle;
+}
+
 const App = () => {
     //
     // const [count, setCount] = useState(0);
@@ -105,6 +115,8 @@ const App = () => {
     // const name = useInput("Mr.", maxlength)
 
     const { currentItem, changeItem }: any = useTabs(0, content);
+    const titleUpdater = useTitle("Loading...")
+    setTimeout(() => titleUpdater("Home"), 5000)
 
     return (
         <div className="App">
