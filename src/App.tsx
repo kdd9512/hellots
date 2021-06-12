@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import {createGlobalStyle} from 'styled-components';
 import Number from "./Number";
 import {Form, Input} from "./Input";
@@ -86,14 +86,32 @@ const useTabs = (initTab: any, allTabs: any) => {
     }
 }
 
-const useTitle = (initTitle:any) => {
+const useTitle = (initTitle: any) => {
     const [title, setTitle] = useState(initTitle);
     const updateTitle = () => {
-        const htmlTitle:any = document.querySelector("title");
+        const htmlTitle: any = document.querySelector("title");
         htmlTitle.innerText = title;
     };
     useEffect(updateTitle, [title]);
     return setTitle;
+}
+
+const useClick = (onClick: any) => {
+    // if (typeof onClick !== "function"){
+    //     return ;
+    // }
+    const element: any = useRef();
+    useEffect(() => {
+        if (element.current) {
+            element.current.addEventListener("click", onClick);
+        }
+        return () => {
+            if (element.current) {
+                element.current.removeEventListener("click", onClick);
+            }
+        };
+    }, []);
+    return element;
 }
 
 const App = () => {
@@ -114,9 +132,14 @@ const App = () => {
     //     !value.includes("@") && !value.includes("#");
     // const name = useInput("Mr.", maxlength)
 
-    const { currentItem, changeItem }: any = useTabs(0, content);
-    const titleUpdater = useTitle("Loading...")
-    setTimeout(() => titleUpdater("Home"), 5000)
+    // const { currentItem, changeItem }: any = useTabs(0, content);
+    // const titleUpdater = useTitle("Loading...")
+    // setTimeout(() => titleUpdater("Home"), 5000)
+
+
+    // const input = useRef();
+    const sayHello = () => console.log("say Hello");
+    const title = useClick(sayHello);
 
     return (
         <div className="App">
@@ -127,11 +150,14 @@ const App = () => {
 
             {/*<input placeholder="Name" {...name} />*/}
 
-            {content.map(
-                (section ,index) => (
-                    <button onClick={() => changeItem(index)}>{section.tab}</button>
-                ))}
-            <div>{currentItem.content}</div>
+            {/*{content.map(*/}
+            {/*    (section ,index) => (*/}
+            {/*        <button onClick={() => changeItem(index)}>{section.tab}</button>*/}
+            {/*    ))}*/}
+            {/*<div>{currentItem.content}</div>*/}
+
+            <h1 ref={title}>HI</h1>
+
         </div>
     );
 }
