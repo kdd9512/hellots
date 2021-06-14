@@ -114,11 +114,11 @@ const useClick = (onClick: any) => {
     return element;
 };
 
-const useConfirm = (msg:string, callback:any, rejection:any) => {
+const useConfirm = (msg: string, callback: any, rejection: any) => {
     if (typeof callback !== "function") {
         return;
     }
-    const confirmAction =  () => {
+    const confirmAction = () => {
         if (window.confirm(msg)) {
             callback();
         } else {
@@ -126,6 +126,76 @@ const useConfirm = (msg:string, callback:any, rejection:any) => {
         }
     };
     return confirmAction;
+};
+
+
+const usePreventLeave = () => {
+    const listener = (e: any) => {
+        e.preventDefault();
+        e.returnValue = "";
+    }
+    const enablePrevent = () => window.addEventListener("beforeunload", listener);
+    const disablePrevent = () => window.removeEventListener("beforeunload", listener);
+
+    return {enablePrevent, disablePrevent};
+}
+
+const useBeforeLeave = (onBefore: any) => {
+    useEffect(() => {
+        document.addEventListener("mouseleave", handle);
+        return () => document.removeEventListener("mouseleave", handle);
+    }, []);
+
+    const handle = (e: any) => {
+        const {clientY} = e;
+        if (clientY <= 0) {
+            onBefore();
+        }
+    }
+
+    if (typeof onBefore !== "function") {
+        return;
+    }
+};
+
+const useFadein = (duration = 1, delay = 0) => {
+    const element: any = useRef();
+    useEffect(() => {
+        if (element.current) {
+            const {current} = element;
+            current.style.transition = `opacity ${duration}s ease-in-out ${delay}s`
+            current.style.opacity = 1;
+        }
+    }, []);
+
+    if (typeof duration !== "number" || typeof delay !== "number") {
+        return;
+    }
+
+    return {ref: element, style: {opacity: 0}};
+
+}
+
+const useNetwork = (onChange: any) => {
+    const [status, setStatus] = useState(navigator.onLine);
+
+    const handleChange = () => {
+        if (typeof onChange === "function") {
+            onChange(navigator.onLine);
+        }
+        setStatus(navigator.onLine);
+    };
+
+    useEffect(() => {
+        window.addEventListener("online", handleChange);
+        window.addEventListener("offline", handleChange);
+        window.removeEventListener("online", handleChange);
+        window.removeEventListener("offline", handleChange);
+
+    }, []);
+
+
+    return status;
 };
 
 
@@ -156,10 +226,22 @@ const App = () => {
     // const sayHello = () => console.log("say Hello");
     // const title = useClick(sayHello);
 
-    const deleteWorld = () => console.log("Deleting the World...")
-    const abort = () => console.log("Aborted.")
-    const confrmDelete = useConfirm("You want to DELETE?", deleteWorld, abort);
+    // const deleteWorld = () => console.log("Deleting the World...")
+    // const abort = () => console.log("Aborted.")
+    // const confirmDelete = useConfirm("You want to DELETE?", deleteWorld, abort);
 
+    // const { enablePrevent,disablePrevent } = usePreventLeave();
+
+    // const dontLeave = () => console.log("don't leave");
+    // useBeforeLeave(dontLeave);
+
+    // const fadeInH1 = useFadein(2,3);
+    // const fadeInP = useFadein(4,5);
+
+    // const handleNetworkChange = (onLine:any) => {
+    //     console.log(onLine ? "online.." : "offline...")
+    // }
+    // const onLine = useNetwork(handleNetworkChange);
 
     return (
         <div className="App">
@@ -178,7 +260,18 @@ const App = () => {
 
             {/*<h1 ref={title}>HI</h1>*/}
 
-            <button onClick={confrmDelete}>Delete</button>
+            {/*<button onClick={confirmDelete}>Delete</button>*/}
+
+
+            {/*<button onClick={enablePrevent}>protect</button>*/}
+            {/*<button onClick={disablePrevent}>unprotect</button>*/}
+
+            {/*<h1 {...fadeInH1}>Hello</h1>*/}
+            {/*<p {...fadeInP}>asdfsadfasdfsadfsadfsadfsadfs</p>*/}
+
+            {/*<h1>{onLine ? "online" : "offline"}</h1>*/}
+
+
         </div>
     );
 }
