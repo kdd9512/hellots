@@ -232,6 +232,26 @@ const useFullScreen = (callback:any) => {
     return {element, triggerFull, exitFull};
 }
 
+const useNotification = (title:any,option:any) => {
+    if (!("Notification" in window)){
+        return;
+    }
+    const fireNotif = () => {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification(title,option);
+                } else {
+                    return;
+                }
+            })
+        } else {
+            new Notification(title,option);
+        }
+    }
+    return fireNotif;
+}
+
 
 const App = () => {
     //
@@ -279,10 +299,12 @@ const App = () => {
 
     // const { y } = useScroll();
 
-    const onFullSc = (isFull:boolean) => {
-        console.log(isFull ? "Full" : "Non")
-    }
-    const {element, triggerFull, exitFull} = useFullScreen(onFullSc);
+    // const onFullSc = (isFull:boolean) => {
+    //     console.log(isFull ? "Full" : "Non")
+    // }
+    // const {element, triggerFull, exitFull} = useFullScreen(onFullSc);
+
+    const trigNotif = useNotification("Success!", {body:"Maybe...Success?"});
 
     return (
         <div className="App" style={{height: "1000vh"}}>
@@ -314,12 +336,13 @@ const App = () => {
 
             {/*<h1 style={{position:"fixed", color: y > 100? "red" : "blue"}}>Hello</h1>*/}
 
-            <div ref={element}>
-                <img src="https://t1.daumcdn.net/cfile/tistory/996E76485C1F70711B"/>
-                <button onClick={exitFull}>exit fullscreen</button>
-            </div>
-            <button onClick={triggerFull}>make fullscreen</button>
+            {/*<div ref={element}>*/}
+            {/*    <img src="https://t1.daumcdn.net/cfile/tistory/996E76485C1F70711B"/>*/}
+            {/*    <button onClick={exitFull}>exit fullscreen</button>*/}
+            {/*</div>*/}
+            {/*<button onClick={triggerFull}>make fullscreen</button>*/}
 
+            <button onClick={trigNotif}>Hello</button>
 
         </div>
     );
