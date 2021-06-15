@@ -3,6 +3,7 @@ import {createGlobalStyle} from 'styled-components';
 import Number from "./Number";
 import {Form, Input} from "./Input";
 import {useInput} from "./useInput";
+import useAxios from "./useAxios";
 
 // interface IState {
 //     counter: number
@@ -304,7 +305,12 @@ const App = () => {
     // }
     // const {element, triggerFull, exitFull} = useFullScreen(onFullSc);
 
-    const trigNotif = useNotification("Success!", {body:"Maybe...Success?"});
+    // const trigNotif = useNotification("Success!", {body:"Maybe...Success?"});
+
+    const {loading, data, error, refetch}: any = useAxios({
+            url:"https://yts.mx/api/v2/list_movies.json"
+        });
+    console.log(`loading: ${loading},\n data: ${JSON.stringify(data)},\n error: ${error}`)
 
     return (
         <div className="App" style={{height: "1000vh"}}>
@@ -342,8 +348,11 @@ const App = () => {
             {/*</div>*/}
             {/*<button onClick={triggerFull}>make fullscreen</button>*/}
 
-            <button onClick={trigNotif}>Hello</button>
+            {/*<button onClick={trigNotif}>Hello</button>*/}
 
+            <h1>{data && data.status}</h1>
+            <h2>{loading && "Loading"}</h2>
+            <button onClick={refetch}>refetch</button>
         </div>
     );
 }
